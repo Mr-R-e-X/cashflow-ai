@@ -1,0 +1,24 @@
+{
+  "name": "@cashflow-ai/whatsapp-api",
+  "module": "index.ts",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "dev": "bun --watch --env-file .env src/index.ts"
+    
+  },
+  "dependencies": {
+    "@cashflow-ai/config": "workspace:*",
+    "@cashflow-ai/queue": "workspace:*",
+    "hono": "^4.12.23",
+    "prettier": "^3.8.3",
+    "zod": "^4.4.3"
+  },
+  "devDependencies": {
+    "@types/bun": "latest",
+    "@types/node": "^25.9.1"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  }
+}

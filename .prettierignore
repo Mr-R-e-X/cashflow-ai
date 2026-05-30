@@ -1,0 +1,6 @@
+node_modules
+dist
+.turbo
+migrations
+bun.lock
+*.json
