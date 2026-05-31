@@ -1,4 +1,14 @@
-import { pgTable, uuid, varchar, timestamp, numeric, text, date, jsonb } from "drizzle-orm/pg-core";
+import {
+  date,
+  integer,
+  jsonb,
+  numeric,
+  pgTable,
+  text,
+  timestamp,
+  uuid,
+  varchar,
+} from "drizzle-orm/pg-core";
 
 export const users = pgTable("users", {
   id: uuid("id").primaryKey().defaultRandom(),
@@ -13,9 +23,17 @@ export const transactions = pgTable("transactions", {
   userId: uuid("user_id")
     .references(() => users.id)
     .notNull(),
+  intent: varchar("intent", {
+    enum: ["add_transaction", "add_split_transaction"],
+  }).notNull(),
   amount: numeric("amount", { precision: 12, scale: 2 }).notNull(),
-  type: varchar("type", { enum: ["income", "expense"] }).notNull(),
+  transactionType: varchar("transaction_type", {
+    enum: ["income", "expense"],
+  }).notNull(),
   category: varchar("category", { length: 100 }).notNull(),
+  splitBy: integer("split_by"),
+  perPersonAmount: numeric("per_person_amount", { precision: 12, scale: 2 }),
+  confidence: numeric("confidence", { precision: 3, scale: 2 }),
   note: text("note"),
   date: date("date").notNull(),
   raw: text("raw").notNull(),

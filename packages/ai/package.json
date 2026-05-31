@@ -1,8 +1,14 @@
 {
   "name": "@cashflow-ai/ai",
-  "module": "index.ts",
+  "module": "./src/index.ts",
   "type": "module",
   "private": true,
+  "exports": {
+    ".": {
+      "types": "./src/index.ts",
+      "default": "./src/index.ts"
+    }
+  },
   "dependencies": {
     "@ai-sdk/google": "^3.0.80",
     "@cashflow-ai/config": "workspace:*",
