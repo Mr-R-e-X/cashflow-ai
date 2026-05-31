@@ -1,4 +1,4 @@
-import { pgTable, uuid, varchar, timestamp, numeric, text, date } from "drizzle-orm/pg-core";
+import { pgTable, uuid, varchar, timestamp, numeric, text, date, jsonb } from "drizzle-orm/pg-core";
 
 export const users = pgTable("users", {
   id: uuid("id").primaryKey().defaultRandom(),
@@ -19,5 +19,16 @@ export const transactions = pgTable("transactions", {
   note: text("note"),
   date: date("date").notNull(),
   raw: text("raw").notNull(),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+export const webhookLogs = pgTable("webhook_logs", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  messageId: varchar("message_id").unique(),
+  phone: varchar("phone"),
+  payload: jsonb("payload").notNull(),
+  status: varchar("status", {
+    enum: ["received", "processed", "failed"],
+  }).default("received"),
   createdAt: timestamp("created_at").defaultNow(),
 });
