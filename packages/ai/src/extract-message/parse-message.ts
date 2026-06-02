@@ -15,3 +15,27 @@ export async function parseMessage(rawText: string): Promise<TransactionIntent> 
 
   return output;
 }
+
+/**
+ * For Paid service we can use cached system call.
+ * 
+ * import { getCachedContentName, MODEL } from "./ai-provider";
+ * export async function parseMessage(rawText: string): Promise<TransactionIntent> {
+  const cachedContent = await getCachedContentName();
+
+  const { output, providerMetadata } = await generateText({
+    model: MODEL,
+    prompt: rawText,
+    output: Output.object({
+      schema: TransactionSchema,
+    }),
+    providerOptions: {
+      google: {
+        cachedContent,
+      },
+    },
+  });
+  console.log("Cached Tokens, ", providerMetadata?.cachedTokens);
+  return output;
+}
+ */

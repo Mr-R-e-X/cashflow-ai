@@ -13,7 +13,7 @@ export const PERIODS = [
 export const TransactionIntentSchema = z.discriminatedUnion("intent", [
   z.object({
     intent: z.literal("add_transaction"),
-    transactionType: z.enum(["income", "expense"]),
+    transactionType: z.enum(["income", "expense", "investment"]),
     amount: z.number().positive(),
     category: z.string(),
     note: z.string().optional(),
@@ -97,6 +97,18 @@ export const TransactionIntentSchema = z.discriminatedUnion("intent", [
 
   z.object({
     intent: z.literal("help"),
+    topic: z.enum([
+      "general",
+      "add_transaction",
+      "split",
+      "summary",
+      "budget",
+      "investment",
+      "delete",
+      "categories",
+      "balance",
+      "export",
+    ]),
     confidence: z.number().min(0).max(1).optional(),
   }),
 
@@ -109,7 +121,7 @@ export const TransactionIntentSchema = z.discriminatedUnion("intent", [
   z.object({
     intent: z.literal("non_financial"),
     confidence: z.number().min(0).max(1).optional(),
-    message: z.string().optional(),
+    message: z.string(),
   }),
 ]);
 

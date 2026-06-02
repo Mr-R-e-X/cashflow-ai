@@ -12,6 +12,7 @@
   "dependencies": {
     "@ai-sdk/google": "^3.0.80",
     "@cashflow-ai/config": "workspace:*",
+    "@google/genai": "^2.7.0",
     "ai": "^6.0.193",
     "prettier": "^3.8.3",
     "zod": "^4.4.3"
