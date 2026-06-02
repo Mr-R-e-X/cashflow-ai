@@ -8,6 +8,8 @@ import {
   timestamp,
   uuid,
   varchar,
+  boolean,
+  index,
 } from "drizzle-orm/pg-core";
 
 export const users = pgTable("users", {
@@ -18,27 +20,38 @@ export const users = pgTable("users", {
   createdAt: timestamp("created_at").defaultNow(),
 });
 
-export const transactions = pgTable("transactions", {
-  id: uuid("id").primaryKey().defaultRandom(),
-  userId: uuid("user_id")
-    .references(() => users.id)
-    .notNull(),
-  intent: varchar("intent", {
-    enum: ["add_transaction", "add_split_transaction"],
-  }).notNull(),
-  amount: numeric("amount", { precision: 12, scale: 2 }).notNull(),
-  transactionType: varchar("transaction_type", {
-    enum: ["income", "expense"],
-  }).notNull(),
-  category: varchar("category", { length: 100 }).notNull(),
-  splitBy: integer("split_by"),
-  perPersonAmount: numeric("per_person_amount", { precision: 12, scale: 2 }),
-  confidence: numeric("confidence", { precision: 3, scale: 2 }),
-  note: text("note"),
-  date: date("date").notNull(),
-  raw: text("raw").notNull(),
-  createdAt: timestamp("created_at").defaultNow(),
-});
+export const transactions = pgTable(
+  "transactions",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    userId: uuid("user_id")
+      .references(() => users.id, { onDelete: "cascade" })
+      .notNull(),
+    intent: varchar("intent", {
+      enum: ["add_transaction", "add_split_transaction"],
+    }).notNull(),
+    amount: numeric("amount", { precision: 12, scale: 2 }).notNull(),
+    transactionType: varchar("transaction_type", {
+      enum: ["income", "expense", "investment"],
+    }).notNull(),
+    category: varchar("category", { length: 100 }).notNull(),
+    splitBy: integer("split_by"),
+    perPersonAmount: numeric("per_person_amount", { precision: 12, scale: 2 }),
+    confidence: numeric("confidence", { precision: 3, scale: 2 }),
+    note: text("note"),
+    date: date("date").notNull(),
+    raw: text("raw").notNull(),
+    isDeleted: boolean("is_deleted").default(false),
+    createdAt: timestamp("created_at").defaultNow(),
+    updatedAt: timestamp("updated_at").defaultNow(),
+  },
+  (table) => [
+    index("transactions_user_id_idx").on(table.userId),
+    index("transactions_date_idx").on(table.date),
+    index("transactions_category_idx").on(table.category),
+    index("transactions_user_date_idx").on(table.userId, table.date),
+  ]
+);
 
 export const webhookLogs = pgTable("webhook_logs", {
   id: uuid("id").primaryKey().defaultRandom(),
