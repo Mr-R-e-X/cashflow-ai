@@ -8,7 +8,7 @@ export function incomingMessageWorker(handler: (job: IncomingMessageJobData) => 
     async (job) => await handler(job.data),
     {
       connection: redisConnection,
-      concurrency: 10,
+      concurrency: 20,
     }
   );
 }
