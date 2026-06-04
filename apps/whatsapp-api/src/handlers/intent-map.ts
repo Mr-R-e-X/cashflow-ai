@@ -16,7 +16,12 @@ import {
   handleSetBudget,
 } from "./message.handler";
 
-export type HandlerParameters = { userPhone: string; result: TransactionIntent; rawText: string };
+export type HandlerParameters = {
+  userPhone: string;
+  result: TransactionIntent;
+  rawText: string;
+  messageId: string;
+};
 
 type Handler = (params: HandlerParameters) => Promise<void>;
 

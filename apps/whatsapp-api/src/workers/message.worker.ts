@@ -1,8 +1,31 @@
 import { parseMessage } from "@cashflow-ai/ai";
 import { incomingMessageWorker, type IncomingMessageJobData } from "@cashflow-ai/queue";
+import { intentHandlerMap } from "../handlers/intent-map";
 
-async function handleIncomingMessage({ rawText, userPhone }: IncomingMessageJobData) {
-  const result = await parseMessage(rawText);
+async function handleIncomingMessage({ rawText, userPhone, messageId }: IncomingMessageJobData) {
+  const results = await parseMessage(rawText);
+
+  const writeIntents = results.filter(
+    (r) => r.intent === "add_transaction" || r.intent === "add_split_transaction"
+  );
+
+  const otherIntents = results.filter(
+    (r) => r.intent !== "add_transaction" && r.intent !== "add_split_transaction"
+  );
+
+  await Promise.all(
+    writeIntents.map((result) => {
+      const handler = intentHandlerMap[result.intent];
+      return handler({ userPhone, result, rawText, messageId });
+    })
+  );
+
+  await Promise.all(
+    otherIntents.map((result) => {
+      const handler = intentHandlerMap[result.intent];
+      return handler({ userPhone, result, rawText, messageId });
+    })
+  );
 }
 
 export async function startMessageWorker() {
