@@ -1,6 +1,9 @@
 import type { HandlerParameters } from "./intent-map";
 
 export async function handleAddTransaction(params: HandlerParameters): Promise<string> {
+  if (params.result.intent !== "add_transaction") {
+    return "Wrong intent";
+  }
   return "Hello";
 }
 

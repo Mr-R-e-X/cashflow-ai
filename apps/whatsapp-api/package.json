@@ -8,10 +8,11 @@
   },
   "dependencies": {
     "@cashflow-ai/ai": "workspace:*",
-    "@cashflow-ai/db": "workspace:*",
     "@cashflow-ai/config": "workspace:*",
+    "@cashflow-ai/db": "workspace:*",
     "@cashflow-ai/queue": "workspace:*",
     "hono": "^4.12.23",
+    "ioredis": "^5.11.1",
     "prettier": "^3.8.3",
     "zod": "^4.4.3"
   },
