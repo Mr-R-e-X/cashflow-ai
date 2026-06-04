@@ -23,7 +23,7 @@ export type HandlerParameters = {
   messageId: string;
 };
 
-type Handler = (params: HandlerParameters) => Promise<void>;
+type Handler = (params: HandlerParameters) => Promise<string>;
 
 export const intentHandlerMap: Record<TransactionIntent["intent"], Handler> = {
   add_transaction: handleAddTransaction,

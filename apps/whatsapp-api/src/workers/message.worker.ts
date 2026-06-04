@@ -1,5 +1,9 @@
 import { parseMessage } from "@cashflow-ai/ai";
-import { incomingMessageWorker, type IncomingMessageJobData } from "@cashflow-ai/queue";
+import {
+  incomingMessageWorker,
+  replyMessageProcessingQueue,
+  type IncomingMessageJobData,
+} from "@cashflow-ai/queue";
 import { intentHandlerMap } from "../handlers/intent-map";
 
 async function handleIncomingMessage({ rawText, userPhone, messageId }: IncomingMessageJobData) {
@@ -13,19 +17,42 @@ async function handleIncomingMessage({ rawText, userPhone, messageId }: Incoming
     (r) => r.intent !== "add_transaction" && r.intent !== "add_split_transaction"
   );
 
-  await Promise.all(
+  const writeReplies = await Promise.all(
     writeIntents.map((result) => {
       const handler = intentHandlerMap[result.intent];
       return handler({ userPhone, result, rawText, messageId });
     })
   );
 
-  await Promise.all(
+  const otherReplies = await Promise.all(
     otherIntents.map((result) => {
       const handler = intentHandlerMap[result.intent];
       return handler({ userPhone, result, rawText, messageId });
     })
   );
+
+  if (writeReplies.length > 0) {
+    const writeMessage =
+      writeReplies.length === 1
+        ? `${writeReplies[0]}`
+        : `${writeReplies.length} transactions:\n${writeReplies.map((r) => `  ${r}`).join("\n")}`;
+
+    await replyMessageProcessingQueue.add(
+      "reply-write-message",
+      { userPhone, message: writeMessage },
+      { jobId: `reply-write-${messageId}` }
+    );
+  }
+
+  if (otherReplies.length > 0) {
+    const otherMessage = otherReplies.join("\n\n");
+
+    await replyMessageProcessingQueue.add(
+      "reply-read-message",
+      { userPhone, message: otherMessage },
+      { jobId: `reply-read-${messageId}` }
+    );
+  }
 }
 
 export async function startMessageWorker() {
