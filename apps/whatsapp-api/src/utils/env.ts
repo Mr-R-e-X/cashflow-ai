@@ -5,6 +5,9 @@ export const envSchema = z.object({
   WHATSAPP_ACCESS_TOKEN: z.string(),
   WHATSAPP_PHONE_NUMBER_ID: z.string(),
   WHATSAPP_VERIFY_TOKEN: z.string(),
+  DATABASE_URL: z.string(),
+  REDIS_URL: z.string(),
+  GEMINI_API_KEY: z.string(),
 });
 
 const parsed = envSchema.safeParse(process.env);
